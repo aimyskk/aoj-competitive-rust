@@ -12,12 +12,6 @@ fn reads<T: std::str::FromStr>(n: u32) -> Vec<T> {
   vec
 }
 
-fn read_vec<T: std::str::FromStr>() -> Vec<T> {
-  let mut buf = String::new();
-  std::io::stdin().read_line(&mut buf).ok();
-  buf.trim().split_whitespace().map(|t| t.parse::<T>().ok().unwrap()).collect()
-}
-
 fn read_tuple<T1: std::str::FromStr, T2: std::str::FromStr>() -> (T1, T2) {
   let mut buf = String::new();
   std::io::stdin().read_line(&mut buf).ok();
@@ -33,4 +27,29 @@ fn read_tuples<T1: std::str::FromStr, T2: std::str::FromStr>(n: u32) -> Vec<(T1,
     vec.push(read_tuple());
   }
   vec
+}
+
+fn read_vec<T: std::str::FromStr>() -> Vec<T> {
+  let mut buf = String::new();
+  std::io::stdin().read_line(&mut buf).ok();
+  buf.trim().split_whitespace().map(|t| t.parse::<T>().ok().unwrap()).collect()
+}
+
+fn read_mat<T: std::str::FromStr>(h: usize) -> Vec<Vec<T>> {
+  let mut mat: Vec<Vec<T>> = vec![];
+  for _ in 0 .. h {
+    mat.push(read_vec());
+  }
+  mat
+}
+ 
+fn print_vec<T: std::string::ToString>(vec: &Vec<T>) {
+  let out = vec.iter().map(|e| e.to_string()).collect::<Vec<_>>().as_slice().join(" ").to_string();
+  println!("{}", out);
+}
+ 
+fn print_mat<T: std::string::ToString>(mat: &Vec<Vec<T>>) {
+  for v in mat {
+    print_vec(v);
+  }
 }
