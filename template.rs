@@ -44,12 +44,12 @@ fn read_mat<T: std::str::FromStr>(h: usize) -> Vec<Vec<T>> {
 }
  
 fn print_vec<T: std::string::ToString>(vec: &Vec<T>, sep: &str) {
-  let out = vec.iter().map(|e| e.to_string()).collect::<Vec<_>>().as_slice().join(sep).to_string();
+  let out = vec.iter().map(|e| e.to_string()).collect::<Vec<_>>().as_slice().join(sep);
   println!("{}", out);
 }
  
-fn print_mat<T: std::string::ToString>(mat: &Vec<Vec<T>>) {
+fn print_mat<T: std::string::ToString>(mat: &Vec<Vec<T>>, sep: &str) {
   for v in mat {
-    print_vec(v);
+    print_vec(v, sep);
   }
 }
