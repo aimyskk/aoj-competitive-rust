@@ -6,6 +6,7 @@ struct UnionFind {
 impl UnionFind {
   fn new(n: usize) -> UnionFind {
     UnionFind {
+      n: n,
       rp: (0..n).collect(),
       rk: vec![1; n]
     }
@@ -21,6 +22,13 @@ impl UnionFind {
 
   fn same(&self, p: usize, q: usize) -> bool {
     self.rep(p) == self.rep(q)
+  }
+
+  fn count(&self) -> usize {
+    let mut reps = (0..self.n).map(|x|self.rep(x)).collect::<Vec<_>>();
+    reps.sort();
+    reps.dedup();
+    reps.len()
   }
 
   fn unite(&mut self, p: usize, q:usize) {
