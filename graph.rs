@@ -1,6 +1,6 @@
 struct Graph {
   size: usize,
-  adj: Vec<Vec<(usize,isize)>>
+  adj: Vec<Vec<(usize, isize)>>
 }
 
 impl Clone for Graph {
@@ -14,13 +14,13 @@ impl Clone for Graph {
 
 #[allow(dead_code)]
 impl Graph {
-  fn new_nonlabeled(n: usize, edges: &[(usize,usize)]) -> Graph {
+  fn new_nonlabeled(n: usize, edges: &[(usize, usize)]) -> Graph {
     let edges = edges.iter().map(|&(a,b)|(a,b,0isize)).collect::<Vec<_>>();
     Graph::new_labeled(n, &edges)
   }
 
-  fn new_labeled(n: usize, edges: &[(usize,usize,isize)]) -> Graph {
-    let mut g: Vec<Vec<(usize,isize)>> = vec![vec![]; n];
+  fn new_labeled(n: usize, edges: &[(usize, usize, isize)]) -> Graph {
+    let mut g: Vec<Vec<(usize, isize)>> = vec![vec![]; n];
     for &(a, b, c) in edges {
       g[a].push((b,c));
       g[b].push((a,c));  // delete for digraph
@@ -36,11 +36,35 @@ impl Graph {
     self.size
   }
 
+  fn edges(&self) -> Vec<(usize, usize, isize)> {
+    let mut buf = vec![];
+    for (i, next) in self.adj.iter().enumerate() {
+      for &(j, x) in next {
+        buf.push((i, j, x))
+      }
+    }
+    buf
+  }
+
+  fn bellman_ford(&self, s: usize) -> Vec<isize> {
+    const INF: isize = std::isize::MAX >> 1;
+    let edges = self.edges();
+    let mut bf: Vec<isize> = vec![INF; self.size];
+    bf[s] = 0;
+
+    for _ in 1 .. self.size {
+      for &(v, w, c) in &edges {
+        bf[w] = std::cmp::min(bf[w], bf[v]+c)
+      }
+    }
+    bf
+  }
+
   fn dijkstra(&self, s: usize) -> Vec<isize> {
     use std::collections::BinaryHeap;
 
-    let inf = isize::max_value();
-    let mut dk: Vec<isize> = vec![inf; self.size];
+    const INF: isize = std::isize::MAX;
+    let mut dk: Vec<isize> = vec![INF; self.size];
     dk[s] = 0;
 
     let mut pq = BinaryHeap::new();
@@ -60,8 +84,8 @@ impl Graph {
   }
 
   fn warshall_floyd(&self) -> Vec<Vec<isize>> {
-    let inf = isize::max_value() >> 1;
-    let mut wf: Vec<Vec<isize>> = vec![vec![inf; self.size]; self.size];
+    const INF: isize = std::isize::MAX >> 1;
+    let mut wf: Vec<Vec<isize>> = vec![vec![INF; self.size]; self.size];
     for i in 0 .. self.size {wf[i][i] = 0}
 
     for (i, next) in self.adj.iter().enumerate() {
