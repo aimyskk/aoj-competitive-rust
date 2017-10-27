@@ -32,6 +32,12 @@ impl Graph {
     self.dfs(0).len() == self.size
   }
 
+  fn is_hitofude(&self) -> bool {
+    let ploop = self.adj.iter().all(|vs|vs.len()%2==0);
+    let pnloop = self.adj.iter().filter(|vs|vs.len()%2==1).count() == 2;
+    ploop || pnloop
+  }
+
   fn size(&self) -> usize {
     self.size
   }
