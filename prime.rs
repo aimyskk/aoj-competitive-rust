@@ -7,7 +7,18 @@ mod prime {
   }
 
   pub fn primes(n: usize) -> Vec<usize> {
-    (2..n+1).filter(|&x|is_prime(x)).collect()
+    if n < 2 {return vec![]}
+    let mut ps = vec![true; n+1];
+    ps[0] = false;
+    ps[1] = false;
+    for i in 2 .. n+1 {
+      if ps[i] {
+        for k in 2 .. n/i+1 {
+          ps[i*k] = false;
+        }
+      }
+    }
+    ps.iter().enumerate().filter(|&(_,&p)|p).map(|(i,_)|i).collect()
   }
 
   pub fn factorize(n: usize) -> Vec<usize> {
