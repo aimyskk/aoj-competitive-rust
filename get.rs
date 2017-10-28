@@ -65,4 +65,10 @@ mod get {
     }
     mat
   }
+
+  pub fn chars() -> Vec<char> {
+    let mut buf = String::new();
+    stdin().read_line(&mut buf).ok();
+    buf.trim().chars().collect()
+  }
 }
