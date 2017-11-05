@@ -54,3 +54,18 @@ fn permutations<T: Clone + std::fmt::Debug>(vec: &Vec<T>) -> Vec<Vec<T>> {
   go(vec, 1, vec.len(), vec.len(), &mut vec![], &mut acc);
   acc
 }
+
+fn group_by<T: PartialEq + Clone, F>(vec: &Vec<T>, f: F) -> Vec<Vec<T>> where F: Fn(&T, &T) -> bool {
+  let l = vec.len();
+  let mut gs = vec![];
+  let mut g = vec![];
+  for i in 0 .. l {
+    g.push(vec[i].clone());
+    if i < l-1 && !f(&vec[i], &vec[i+1]) {
+      gs.push(g.clone());
+      g.clear()
+    }
+  }
+  gs.push(g.clone());
+  gs
+}
