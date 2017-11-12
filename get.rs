@@ -5,8 +5,9 @@ mod get {
 
   pub fn val<T: FromStr>() -> T {
     let mut buf = String::new();
-    stdin().read_line(&mut buf).ok();
-    buf.trim().parse::<T>().ok().unwrap()
+    let s = stdin();
+    s.lock().read_line(&mut buf).ok();
+    buf.trim_right().parse::<T>().ok().unwrap()
   }
 
   pub fn vals<T: FromStr>(n: usize) -> Vec<T> {
@@ -19,8 +20,9 @@ mod get {
 
   pub fn tuple<T1: FromStr, T2: FromStr>() -> (T1, T2) {
     let mut buf = String::new();
-    stdin().read_line(&mut buf).ok();
-    let mut it = buf.trim().split_whitespace();
+    let s = stdin();
+    s.lock().read_line(&mut buf).ok();
+    let mut it = buf.trim_right().split_whitespace();
     let x = it.next().unwrap().parse::<T1>().ok().unwrap();
     let y = it.next().unwrap().parse::<T2>().ok().unwrap();
     (x, y)
@@ -36,8 +38,9 @@ mod get {
 
   pub fn tuple3<T1: FromStr, T2: FromStr, T3: FromStr>() -> (T1, T2, T3) {
     let mut buf = String::new();
-    stdin().read_line(&mut buf).ok();
-    let mut it = buf.trim().split_whitespace();
+    let s = stdin();
+    s.lock().read_line(&mut buf).ok();
+    let mut it = buf.trim_right().split_whitespace();
     let x = it.next().unwrap().parse::<T1>().ok().unwrap();
     let y = it.next().unwrap().parse::<T2>().ok().unwrap();
     let z = it.next().unwrap().parse::<T3>().ok().unwrap();
@@ -54,8 +57,9 @@ mod get {
 
   pub fn list<T: FromStr>() -> Vec<T> {
     let mut buf = String::new();
-    stdin().read_line(&mut buf).ok();
-    buf.trim().split_whitespace().map(|t| t.parse::<T>().ok().unwrap()).collect()
+    let s = stdin();
+    s.lock().read_line(&mut buf).ok();
+    buf.trim_right().split_whitespace().map(|t| t.parse::<T>().ok().unwrap()).collect()
   }
 
   pub fn lists<T: FromStr>(h: usize) -> Vec<Vec<T>> {
@@ -68,7 +72,8 @@ mod get {
 
   pub fn chars() -> Vec<char> {
     let mut buf = String::new();
-    stdin().read_line(&mut buf).ok();
-    buf.trim().chars().collect()
+    let s = stdin();
+    s.lock().read_line(&mut buf).ok();
+    buf.trim_right().chars().collect()
   }
 }
