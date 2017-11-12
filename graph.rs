@@ -147,6 +147,23 @@ impl Graph {
     path
   }
 
+  fn step(&self, v: usize, d: usize) -> Vec<usize> {
+    fn go(g: &Graph, w: usize, k: usize, ws: &mut Vec<usize>) {
+      ws.push(w);
+      if k == 0 {
+        return
+      } else {
+        for &(next, _) in &g.adj[w] {
+          go(g, next, k-1, ws)
+        }
+      }
+    }
+
+    let mut ws = vec![];
+    go(&self, v, d, &mut ws);
+    ws
+  }
+
   fn cut(&mut self, v: usize, w: usize) {
     self.adj[v].retain(|&(t,_)| t != w);
     self.adj[w].retain(|&(t,_)| t != v);
