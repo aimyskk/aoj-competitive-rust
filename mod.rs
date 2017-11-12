@@ -3,6 +3,7 @@ struct Combination {
   fact_table: Vec<u64>
 }
 
+#[allow(dead_code)]
 impl Combination {
   fn new(n: u64) -> Combination {
     Combination {
@@ -25,6 +26,7 @@ impl Combination {
   }
 }
 
+#[allow(dead_code)]
 mod modulo {
   pub const MOD: u64 = 1_000_000_007;
 
