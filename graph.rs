@@ -15,12 +15,12 @@ impl Clone for Graph {
 #[allow(dead_code)]
 impl Graph {
   fn new_nonlabeled(n: usize, edges: &[(usize, usize)]) -> Graph {
-    let edges = edges.iter().map(|&(a,b)|(a,b,0isize)).collect::<Vec<_>>();
+    let edges = edges.iter().map(|&(a,b)|(a,b,1)).collect::<Vec<_>>();
     Graph::new_labeled(n, &edges)
   }
 
   fn new_labeled(n: usize, edges: &[(usize, usize, isize)]) -> Graph {
-    let mut g: Vec<Vec<(usize, isize)>> = vec![vec![]; n];
+    let mut g: Vec<Vec<(usize, isize)>> = vec![vec![]; n+1];
     for &(a, b, c) in edges {
       g[a].push((b,c));
       g[b].push((a,c));  // delete for digraph
@@ -28,28 +28,17 @@ impl Graph {
     Graph {size: n, adj: g}
   }
 
+  fn is_adjacent(&self, u: usize, v: usize) -> bool {
+    self.adj[u].iter().any(|&(w,_)|w==v) || self.adj[v].iter().any(|&(w,_)|w==u)
+  }
+
   fn is_connected(&self) -> bool {
-    self.dfs(0).len() == self.size
+    self.dfs(1).len() == self.size
   }
 
   fn is_hitofude(&self) -> bool {
-    let ploop = self.adj.iter().all(|vs|vs.len()%2==0);
-    let pnloop = self.adj.iter().filter(|vs|vs.len()%2==1).count() == 2;
-    ploop || pnloop
-  }
-
-  fn size(&self) -> usize {
-    self.size
-  }
-
-  fn edges(&self) -> Vec<(usize, usize, isize)> {
-    let mut buf = vec![];
-    for (i, next) in self.adj.iter().enumerate() {
-      for &(j, x) in next {
-        buf.push((i, j, x))
-      }
-    }
-    buf
+    let deg_odd = self.adj.iter().filter(|vs|vs.len()%2==1).count();
+    deg_odd == 0 || deg_odd == 2
   }
 
   fn bellman_ford(&self, s: usize) -> Vec<isize> {
@@ -91,17 +80,17 @@ impl Graph {
 
   fn warshall_floyd(&self) -> Vec<Vec<isize>> {
     const INF: isize = std::isize::MAX >> 1;
-    let mut wf: Vec<Vec<isize>> = vec![vec![INF; self.size]; self.size];
-    for i in 0 .. self.size {wf[i][i] = 0}
+    let mut wf: Vec<Vec<isize>> = vec![vec![INF; self.size+1]; self.size+1];
+    for i in 1 .. self.size+1 {wf[i][i] = 0}
 
-    for (i, next) in self.adj.iter().enumerate() {
+    for (next, i) in self.adj.iter().zip(1..) {
       for &(j, x) in next {
         wf[i][j] = x
       }
     }
-    for k in 0 .. self.size {
-      for i in 0 .. self.size {
-        for j in 0 .. self.size {
+    for k in 1 .. self.size+1 {
+      for i in 1 .. self.size+1 {
+        for j in 1 .. self.size+1 {
           wf[i][j] = std::cmp::min(wf[i][j], wf[i][k] + wf[k][j]);
         }
       }
@@ -120,8 +109,8 @@ impl Graph {
       }
     }
 
-    let mut canvas: Vec<Option<bool>> = vec![None; self.size];
-    let ans = paint(0, false, self, &mut canvas);
+    let mut canvas: Vec<Option<bool>> = vec![None; self.size+1];
+    let ans = paint(1, false, self, &mut canvas);
     let bs = canvas.iter().enumerate().filter(|&(_,&v)|v==Some(false)).map(|(i,_)|i).collect::<Vec<_>>();
     let ws = canvas.iter().enumerate().filter(|&(_,&v)|v==Some(true)).map(|(i,_)|i).collect::<Vec<_>>();
     if ans {Some((bs,ws))} else {None}
@@ -141,27 +130,48 @@ impl Graph {
     }
 
     let mut path = vec![s];
-    let mut visited = vec![false; self.adj.len()];
+    let mut visited = vec![false; self.size+1];
     visited[s] = true;
     go(&self, s, &mut path, &mut visited);
     path
   }
 
-  fn step(&self, v: usize, d: usize) -> Vec<usize> {
-    fn go(g: &Graph, w: usize, k: usize, ws: &mut Vec<usize>) {
-      ws.push(w);
-      if k == 0 {
-        return
-      } else {
-        for &(next, _) in &g.adj[w] {
-          go(g, next, k-1, ws)
+  fn bfs(&self, v: usize) -> Vec<usize> {
+    use std::collections::VecDeque;
+    let mut q = VecDeque::new();
+    let mut buf = vec![];
+    let mut vd = vec![false; self.size+1];
+    vd[v] = true;
+    q.push_back(v);
+    while let Some(w) = q.pop_front() {
+      buf.push(w);
+      for &(next,_) in self.adj[w].iter() {
+        if !vd[next] {
+          q.push_back(next);
+          vd[next] = true
         }
       }
     }
+    buf
+  }
 
-    let mut ws = vec![];
-    go(&self, v, d, &mut ws);
-    ws
+  fn ultimate(&self, v: usize) -> usize {
+    use std::collections::VecDeque;
+    let mut q = VecDeque::new();
+    let mut dist = 0;
+    let mut vd = vec![false; self.size+1];
+    vd[v] = true;
+    q.push_back((v,dist));
+    while let Some((w, d)) = q.pop_front() {
+      dist = std::cmp::max(dist, d);
+      for &(next,_) in self.adj[w].iter() {
+        if !vd[next] {
+          q.push_back((next, d+1));
+          vd[next] = true
+        }
+      }
+    }
+    dist
   }
 
   fn cut(&mut self, v: usize, w: usize) {
