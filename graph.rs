@@ -28,6 +28,16 @@ impl Graph {
     Graph {size: n, adj: g}
   }
 
+  fn edges(&self) -> Vec<(usize, usize, isize)> {
+    let mut buf = vec![];
+    for (i, next) in self.adj.iter().enumerate() {
+      for &(j, x) in next {
+        buf.push((i, j, x))
+      }
+    }
+    buf
+  }
+
   fn is_adjacent(&self, u: usize, v: usize) -> bool {
     self.adj[u].iter().any(|&(w,_)|w==v) || self.adj[v].iter().any(|&(w,_)|w==u)
   }
@@ -83,7 +93,7 @@ impl Graph {
     let mut wf: Vec<Vec<isize>> = vec![vec![INF; self.size+1]; self.size+1];
     for i in 1 .. self.size+1 {wf[i][i] = 0}
 
-    for (next, i) in self.adj.iter().zip(1..) {
+    for (next, i) in self.adj.iter().zip(0..) {
       for &(j, x) in next {
         wf[i][j] = x
       }
