@@ -16,7 +16,7 @@ impl UnionFind {
   }
 
   fn rep(&self, p: usize) -> usize {
-    if self.rp[p] == p {p} else {self.rp[self.rp[p]]}
+    if self.rp[p] == p {p} else {self.rep(self.rp[p])}
   }
 
   fn rank(&self, p: usize) -> usize {
