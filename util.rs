@@ -1,17 +1,9 @@
-fn lcm(x: u32, y: u32) -> u32 {
+fn lcm(x: usize, y: usize) -> usize {
   (x * y) / gcd(x, y)
 }
- 
-fn gcd(x: u32, y: u32) -> u32 {
-  let mut a = x;
-  let mut b = y;
-  let mut c;
-  while a != 0 && b != 0 {
-    c = b;
-    b = a % b;
-    a = c;
-  }
-  std::cmp::max(a, b)
+
+fn gcd(a: usize, b: usize) -> usize {
+  if b == 0 {a} else {gcd(b, a % b)}
 }
 
 fn is_leap (y: u32) -> bool {
