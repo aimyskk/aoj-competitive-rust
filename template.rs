@@ -1,12 +1,15 @@
 #![allow(unused_imports, unused_macros, unknown_lints)]
 
-use std::collections::{VecDeque, HashSet, HashMap, BinaryHeap};
-use std::cmp::{max, min, Ordering};
+use std::collections::*;
+use std::f64::*;
+use std::cmp::*;
+use std::cmp::Ordering::*;
 
-macro_rules! dump {[$($e:expr), +] => {println!(concat!($(stringify!($e), " = {:?}\n"), +), $($e), +)}}
-macro_rules! max {[$e0:expr, $($e:expr), +] => {{let mut r = $e0; $(r = max(r, $e);)+ r}}}
-macro_rules! min {[$e0:expr, $($e:expr), +] => {{let mut r = $e0; $(r = min(r, $e);)+ r}}}
+macro_rules! dump {($($e:expr), +) => {println!(concat!($(stringify!($e), " = {:?}\n"), +), $($e), +)}}
+macro_rules! max {($e0:expr, $($e:expr), +) => {{let mut r = $e0; $(r = max(r, $e);)+ r}}}
+macro_rules! min {($e0:expr, $($e:expr), +) => {{let mut r = $e0; $(r = min(r, $e);)+ r}}}
 macro_rules! freq {($v:expr) => {{let mut h = HashMap::new(); for x in $v {*h.entry(x).or_insert(0) += 1} h}}}
+macro_rules! foreach {($v:expr, $f:expr) => {for x in $v.iter_mut() {*x = $f(*x)}}}
 
 fn main() {
   let
