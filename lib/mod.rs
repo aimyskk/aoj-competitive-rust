@@ -28,17 +28,25 @@ impl Combination {
 
 #[allow(dead_code)]
 mod modulo {
-  pub const MOD: u64 = 1_000_000_007;
+  pub const MOD: usize = 1_000_000_007;
 
-  pub fn plus(x: u64, y: u64) -> u64 {
+  pub fn add(x: usize, y: usize) -> usize {
     (x + y) % MOD
   }
 
-  pub fn mul(x: u64, y: u64) -> u64 {
+  pub fn sum(xs: &[usize]) -> usize {
+    xs.iter().fold(0,|a,&x|add(a,x))
+  }
+
+  pub fn mul(x: usize, y: usize) -> usize {
     (x * y) % MOD
   }
 
-  pub fn pow(x: u64, n: u64) -> u64 {
+  pub fn product(xs: &[usize]) -> usize {
+    xs.iter().fold(1,|a,&x|mul(a,x))
+  }
+
+  pub fn pow(x: usize, n: usize) -> usize {
     match n {
       0 => 1,
       _ if n % 2 == 1 => mul(x, pow(x, n-1)),
