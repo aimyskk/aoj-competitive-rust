@@ -38,6 +38,14 @@ impl Graph {
     buf
   }
 
+  fn extract<F>(&self, p: F) -> Vec<usize> where F: Fn(usize) -> bool {
+    (1..self.size+1).into_iter().filter(|&v|p(v)).collect()
+  }
+
+  fn degree(&self, v: usize) -> usize {
+    self.adj[v].len()
+  }
+
   fn is_adjacent(&self, u: usize, v: usize) -> bool {
     self.adj[u].iter().any(|&(w,_)|w==v) || self.adj[v].iter().any(|&(w,_)|w==u)
   }
