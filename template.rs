@@ -9,7 +9,6 @@ macro_rules! dump {($($e:expr), +) => {println!(concat!($(stringify!($e), " = {:
 macro_rules! max {($e0:expr, $($e:expr), +) => {{let mut r = $e0; $(r = max(r, $e);)+ r}}}
 macro_rules! min {($e0:expr, $($e:expr), +) => {{let mut r = $e0; $(r = min(r, $e);)+ r}}}
 macro_rules! freq {($v:expr) => {{let mut h = HashMap::new(); for x in $v {*h.entry(x).or_insert(0) += 1} h}}}
-macro_rules! foreach {($v:expr, $f:expr) => {for x in $v.iter_mut() {*x = $f(*x)}}}
 
 fn main() {
   let
@@ -19,11 +18,13 @@ fn main() {
 mod get {
   use std::io::*;
   use std::str::*;
+  use std::process::*;
 
   pub fn val<T: FromStr>() -> T {
     let mut buf = String::new();
     let s = stdin();
     s.lock().read_line(&mut buf).ok();
+    if buf.is_empty() {println!("No input"); exit(0)}
     buf.trim_right().parse::<T>().ok().unwrap()
   }
 
@@ -39,6 +40,7 @@ mod get {
     let mut buf = String::new();
     let s = stdin();
     s.lock().read_line(&mut buf).ok();
+    if buf.is_empty() {println!("No input"); exit(0)}
     let mut it = buf.trim_right().split_whitespace();
     let x = it.next().unwrap().parse::<T1>().ok().unwrap();
     let y = it.next().unwrap().parse::<T2>().ok().unwrap();
@@ -57,6 +59,7 @@ mod get {
     let mut buf = String::new();
     let s = stdin();
     s.lock().read_line(&mut buf).ok();
+    if buf.is_empty() {println!("No input"); exit(0)}
     let mut it = buf.trim_right().split_whitespace();
     let x = it.next().unwrap().parse::<T1>().ok().unwrap();
     let y = it.next().unwrap().parse::<T2>().ok().unwrap();
@@ -76,6 +79,7 @@ mod get {
     let mut buf = String::new();
     let s = stdin();
     s.lock().read_line(&mut buf).ok();
+    if buf.is_empty() {println!("No input"); exit(0)}
     buf.trim_right().split_whitespace().map(|t| t.parse::<T>().ok().unwrap()).collect()
   }
 
@@ -91,6 +95,7 @@ mod get {
     let mut buf = String::new();
     let s = stdin();
     s.lock().read_line(&mut buf).ok();
+    if buf.is_empty() {println!("No input"); exit(0)}
     buf.trim_right().chars().collect()
   }
 }
