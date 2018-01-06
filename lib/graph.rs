@@ -38,6 +38,22 @@ impl Graph {
     buf
   }
 
+  fn path(&self, v: usize, n: usize) -> Vec<Vec<usize>> {
+    fn go(g: &Graph, v: usize, n: usize, mut acc: Vec<usize>, buf: &mut Vec<Vec<usize>>) {
+      if n == 0 {buf.push(acc.clone()); return}
+      for &(w,_) in &g.adj[v] {
+        acc.push(w);
+        go(g, w, n-1, acc.clone(), buf);
+        let _ = acc.pop();
+      }
+    }
+
+    let mut buf = vec![];
+    let acc = vec![v];
+    go(self, v, n, acc.clone(), &mut buf);
+    buf
+  }
+
   fn extract<F>(&self, p: F) -> Vec<usize> where F: Fn(usize) -> bool {
     (1..self.size+1).into_iter().filter(|&v|p(v)).collect()
   }
